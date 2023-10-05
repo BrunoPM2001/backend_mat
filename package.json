@@ -1,0 +1,19 @@
+{
+  "name": "mat_backend",
+  "version": "1.0.0",
+  "description": "App backend del mat.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "express",
+    "prisma",
+    "mat"
+  ],
+  "author": "Bruno PM",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

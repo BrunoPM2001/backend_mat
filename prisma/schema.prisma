@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Dependencias {
+  id       Int        @id @default(autoincrement())
+  nombre   String     @db.VarChar(255)
+  Tramites Tramites[]
+}
+
+model Perfiles {
+  id           Int            @id @default(autoincrement())
+  id_usuario   Int            @unique(map: "id_usuario")
+  celular      String         @db.VarChar(255)
+  doc          String?        @db.VarChar(255)
+  a_paterno    String?        @db.VarChar(255)
+  a_materno    String?        @db.VarChar(255)
+  nombres      String?        @db.VarChar(255)
+  codigo       String?        @db.VarChar(255)
+  facultad     String?        @db.VarChar(255)
+  sexo         Perfiles_sexo?
+  ruc          String?        @db.VarChar(255)
+  razon_social String?        @db.VarChar(255)
+  Usuarios     Usuarios       @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Perfiles_ibfk_1")
+}
+
+model Requisitos {
+  id                  Int                   @id @default(autoincrement())
+  id_tramite          Int
+  nombre              String                @db.VarChar(255)
+  descripcion         String                @db.VarChar(255)
+  tipo                Requisitos_tipo
+  formato             String                @db.VarChar(255)
+  plantilla           String                @db.VarChar(255)
+  obligatorio         Boolean
+  Tramites            Tramites              @relation(fields: [id_tramite], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Requisitos_ibfk_1")
+  RequisitosSolicitud RequisitosSolicitud[]
+
+  @@index([id_tramite], map: "id_tramite")
+}
+
+model RequisitosSolicitud {
+  id           Int         @id @default(autoincrement())
+  id_solicitud Int
+  id_requisito Int
+  contenido    String      @db.VarChar(255)
+  Solicitudes  Solicitudes @relation(fields: [id_solicitud], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "RequisitosSolicitud_ibfk_1")
+  Requisitos   Requisitos  @relation(fields: [id_requisito], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "RequisitosSolicitud_ibfk_2")
+
+  @@index([id_requisito], map: "id_requisito")
+  @@index([id_solicitud], map: "id_solicitud")
+}
+
+model Solicitudes {
+  id                  Int                   @id @default(autoincrement())
+  id_tramite          Int
+  id_usuario          Int
+  fecha_solicitud     DateTime?             @default(dbgenerated("(now())")) @db.Timestamp(0)
+  RequisitosSolicitud RequisitosSolicitud[]
+  Usuarios            Usuarios              @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Solicitudes_ibfk_1")
+  Tramites            Tramites              @relation(fields: [id_tramite], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Solicitudes_ibfk_2")
+
+  @@index([id_tramite], map: "id_tramite")
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model Tramites {
+  id             Int                @id @default(autoincrement())
+  id_dependencia Int
+  nombre         String             @db.VarChar(255)
+  descripcion    String             @db.VarChar(255)
+  html           String             @db.VarChar(255)
+  estado         String             @db.VarChar(255)
+  tupa           Boolean
+  categoria      Tramites_categoria
+  Requisitos     Requisitos[]
+  Solicitudes    Solicitudes[]
+  Dependencias   Dependencias       @relation(fields: [id_dependencia], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Tramites_ibfk_1")
+
+  @@index([id_dependencia], map: "id_dependencia")
+}
+
+model Usuarios {
+  id             Int             @id @default(autoincrement())
+  username       String          @unique(map: "username") @db.VarChar(40)
+  password       String          @db.VarChar(255)
+  email          String          @unique(map: "email") @db.VarChar(50)
+  perfil         Usuarios_perfil
+  estado         Usuarios_estado @default(activado)
+  fecha_registro DateTime?       @default(dbgenerated("(now())")) @db.DateTime(0)
+  Perfiles       Perfiles?
+  Solicitudes    Solicitudes[]
+}
+
+enum Requisitos_tipo {
+  texto
+  adjunto
+}
+
+enum Tramites_categoria {
+  constancias
+  certificados
+  grados
+  matriculas
+}
+
+enum Perfiles_sexo {
+  masculino
+  femenino
+}
+
+enum Usuarios_estado {
+  activado
+  bloqueado
+}
+
+enum Usuarios_perfil {
+  interno
+  externo
+  juridico
+}

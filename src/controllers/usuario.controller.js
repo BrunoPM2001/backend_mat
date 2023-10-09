@@ -37,7 +37,7 @@ ctrl.createUsuario = async (req, res) => {
     //  Ver el tipo de perfil que se está creando
     const { perfil } = req.body;
     switch (perfil) {
-      case "interno":
+      case "Interno":
         {
           const {
             doc,
@@ -77,7 +77,7 @@ ctrl.createUsuario = async (req, res) => {
           res.json({ message: "Success", data: result });
         }
         break;
-      case "externo":
+      case "Externo":
         {
           const { doc, a_paterno, a_materno, nombres, email, celular, sexo } =
             req.body;
@@ -106,7 +106,7 @@ ctrl.createUsuario = async (req, res) => {
           res.json({ message: "Success", data: result });
         }
         break;
-      case "juridico":
+      case "Juridico":
         {
           const { ruc, razon_social, email, celular } = req.body;
 
@@ -149,7 +149,7 @@ ctrl.disableUsuario = async (req, res) => {
         id: Number(id),
       },
       data: {
-        estado: "bloqueado",
+        estado: "Bloqueado",
       },
     });
     res.json({
@@ -170,7 +170,7 @@ ctrl.enableUsuario = async (req, res) => {
         id: Number(id),
       },
       data: {
-        estado: "activado",
+        estado: "Activado",
       },
     });
     res.json({
@@ -194,7 +194,7 @@ ctrl.changePass = async (req, res) => {
       },
     });
     if (user != null) {
-      if (user.estado == "activado") {
+      if (user.estado == "Activado") {
         await prisma.usuarios.update({
           where: {
             id: Number(id),
@@ -233,7 +233,7 @@ ctrl.restorePass = async (req, res) => {
         },
       },
     });
-    const newPass = ["interno", "externo"].includes(usuario.perfil)
+    const newPass = ["Interno", "Externo"].includes(usuario.perfil)
       ? usuario.Perfiles.doc
       : usuario.Perfiles.ruc;
     const result = await prisma.usuarios.update({
@@ -256,7 +256,7 @@ export default ctrl;
 /*  Ejemplos de JSON PARA LAS REQUEST
 CREAR USUARIO INTERNO:
 {
-  "perfil": "interno",
+  "perfil": "Interno",
   "doc": "123456789",
   "a_paterno": "Random",
   "a_materno": "Random",
@@ -265,22 +265,22 @@ CREAR USUARIO INTERNO:
   "celular": "987654321",
   "codigo": "12345678",
   "facultad": "FACU",
-  "sexo": "masculino"
+  "sexo": "Masculino"
 }
 CREAR USUARIO EXTERNO:
 {
-  "perfil": "externo",
+  "perfil": "Externo",
   "doc": "12345678",
   "a_paterno": "Ejemplo",
   "a_materno": "Ejemplo",
   "nombres": "Sample",
   "email": "sample@gmail.com",
   "celular": "987654321",
-  "sexo": "masculino"
+  "sexo": "Masculino"
 }
 CREAR USUARIO JURIDICO:
 {
-  "perfil": "juridico",
+  "perfil": "Juridico",
   "email": "juridico@gmail.com",
   "celular": "987654321",
   "ruc": "10724587629",

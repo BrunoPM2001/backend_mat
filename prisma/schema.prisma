@@ -70,19 +70,21 @@ model Solicitudes {
 }
 
 model Tramites {
-  id             Int                @id @default(autoincrement())
-  id_dependencia Int
-  nombre         String             @db.VarChar(255)
-  descripcion    String             @db.VarChar(255)
-  html           String             @db.VarChar(255)
-  estado         String             @db.VarChar(255)
-  tupa           Boolean
-  categoria      Tramites_categoria
-  Requisitos     Requisitos[]
-  Solicitudes    Solicitudes[]
-  Dependencias   Dependencias       @relation(fields: [id_dependencia], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Tramites_ibfk_1")
+  id                Int               @id @default(autoincrement())
+  id_dependencia    Int
+  id_categoria      Int
+  nombre            String            @db.VarChar(255)
+  descripcion       String            @db.VarChar(255)
+  html              String            @db.VarChar(255)
+  estado            Estado_tramite    @default(Deshabilitado)
+  tupa              Boolean
+  Requisitos        Requisitos[]
+  Solicitudes       Solicitudes[]
+  Dependencias      Dependencias      @relation(fields: [id_dependencia], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Tramites_ibfk_1")
+  CategoriasTramite CategoriasTramite @relation(fields: [id_categoria], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Tramites_ibfk_2")
 
   @@index([id_dependencia], map: "id_dependencia")
+  @@index([id_categoria], map: "id_categoria")
 }
 
 model Usuarios {
@@ -91,10 +93,16 @@ model Usuarios {
   password       String          @db.VarChar(255)
   email          String          @unique(map: "email") @db.VarChar(50)
   perfil         Usuarios_perfil
-  estado         Usuarios_estado @default(activado)
+  estado         Usuarios_estado @default(Activado)
   fecha_registro DateTime?       @default(dbgenerated("(now())")) @db.DateTime(0)
   Perfiles       Perfiles?
   Solicitudes    Solicitudes[]
+}
+
+model CategoriasTramite {
+  id       Int        @id @default(autoincrement())
+  nombre   String     @db.VarChar(255)
+  Tramites Tramites[]
 }
 
 enum Requisitos_tipo {
@@ -102,25 +110,23 @@ enum Requisitos_tipo {
   adjunto
 }
 
-enum Tramites_categoria {
-  constancias
-  certificados
-  grados
-  matriculas
-}
-
-enum Perfiles_sexo {
-  masculino
-  femenino
+enum Usuarios_perfil {
+  Interno
+  Externo
+  Juridico
 }
 
 enum Usuarios_estado {
-  activado
-  bloqueado
+  Activado
+  Bloqueado
 }
 
-enum Usuarios_perfil {
-  interno
-  externo
-  juridico
+enum Perfiles_sexo {
+  Masculino
+  Femenino
+}
+
+enum Estado_tramite {
+  Habilitado
+  Deshabilitado
 }

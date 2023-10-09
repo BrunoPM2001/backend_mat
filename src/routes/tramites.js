@@ -1,34 +1,34 @@
-import { Router } from "express"
+import { Router } from "express";
 
-const router = Router()
+const router = Router();
 
 //  Rutas
 router.get("/getTramites", (req, res) => {
-  res.json({ message: "Trámites" })
-})
+  res.json({ message: "Trámites" });
+});
 
 router.get("/getTramite", (req, res) => {
-  res.json({ message: "Trámite" })
-})
+  res.json({ message: "Trámite" });
+});
 
 router.get("/getStatsTramite", (req, res) => {
-  res.json({ message: "Estadísticas del trámite" })
-})
+  res.json({ message: "Estadísticas del trámite" });
+});
 
 router.post("/createTramite", (req, res) => {
-  res.json({ message: "Trámite creado" })
-})
+  res.json({ message: "Trámite creado" });
+});
 
 router.put("/updateTramite", (req, res) => {
-  res.json({ message: "Trámite actualizado" })
-})
+  res.json({ message: "Trámite actualizado" });
+});
 
 router.put("/disableTramite", (req, res) => {
-  res.json({ message: "Trámite habilitado" })
-})
+  res.json({ message: "Trámite habilitado" });
+});
 
 router.put("/enableTramite", (req, res) => {
-  res.json({ message: "Trámite deshabilitado" })
-})
+  res.json({ message: "Trámite deshabilitado" });
+});
 
-export default router
+export default router;

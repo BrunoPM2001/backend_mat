@@ -69,15 +69,15 @@ ctrl.createTramite = async (req, res) => {
 ctrl.disableTramite = async (req, res) => {
   try {
     const { id } = req.query;
-    const result = await prisma.tramites.update({
+    await prisma.tramites.update({
       data: {
-        estado: "Deshabilitado",
+        activo: false,
       },
       where: {
         id: Number(id),
       },
     });
-    res.json({ message: "Success", data: result });
+    res.json({ message: "Success", data: "Trámite deshabilitado." });
   } catch (e) {
     console.log(e);
     res.json({ message: "Fail", data: "Exception" });
@@ -87,15 +87,15 @@ ctrl.disableTramite = async (req, res) => {
 ctrl.enableTramite = async (req, res) => {
   try {
     const { id } = req.query;
-    const result = await prisma.tramites.update({
+    await prisma.tramites.update({
       data: {
-        estado: "Habilitado",
+        activo: true,
       },
       where: {
         id: Number(id),
       },
     });
-    res.json({ message: "Success", data: result });
+    res.json({ message: "Success", data: "Trámite habilitado." });
   } catch (e) {
     console.log(e);
     res.json({ message: "Fail", data: "Exception" });

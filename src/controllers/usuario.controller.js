@@ -149,7 +149,7 @@ ctrl.disableUsuario = async (req, res) => {
         id: Number(id),
       },
       data: {
-        estado: "Bloqueado",
+        activo: false,
       },
     });
     res.json({
@@ -170,7 +170,7 @@ ctrl.enableUsuario = async (req, res) => {
         id: Number(id),
       },
       data: {
-        estado: "Activado",
+        activo: true,
       },
     });
     res.json({
@@ -194,7 +194,7 @@ ctrl.changePass = async (req, res) => {
       },
     });
     if (user != null) {
-      if (user.estado == "Activado") {
+      if (user.activo == true) {
         await prisma.usuarios.update({
           where: {
             id: Number(id),

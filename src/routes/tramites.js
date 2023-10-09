@@ -1,34 +1,23 @@
 import { Router } from "express";
+import ctrl from "../controllers/tramites.controller.js";
 
 const router = Router();
 
 //  Rutas
-router.get("/getTramites", (req, res) => {
-  res.json({ message: "Trámites" });
-});
+router.get("/getTramites", ctrl.getTramites);
 
-router.get("/getTramite", (req, res) => {
-  res.json({ message: "Trámite" });
-});
+router.get("/getTramite", ctrl.getTramite);
 
-router.get("/getStatsTramite", (req, res) => {
-  res.json({ message: "Estadísticas del trámite" });
-});
+router.get("/getStatsTramite", ctrl.getStatsTramite);
 
-router.post("/createTramite", (req, res) => {
-  res.json({ message: "Trámite creado" });
-});
+router.post("/createTramite", ctrl.createTramite);
 
 router.put("/updateTramite", (req, res) => {
   res.json({ message: "Trámite actualizado" });
 });
 
-router.put("/disableTramite", (req, res) => {
-  res.json({ message: "Trámite habilitado" });
-});
+router.put("/disableTramite", ctrl.disableTramite);
 
-router.put("/enableTramite", (req, res) => {
-  res.json({ message: "Trámite deshabilitado" });
-});
+router.put("/enableTramite", ctrl.enableTramite);
 
 export default router;

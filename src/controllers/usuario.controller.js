@@ -1,50 +1,56 @@
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient()
-const ctrl = {}
+const prisma = new PrismaClient();
+const ctrl = {};
 
 //  Funciones - TODO * USE JWT * REESCRUCTURAR LA QUERY DE CREAR
-ctrl.getUsuarios  = async (req, res) => {
+ctrl.getUsuarios = async (req, res) => {
   try {
-    const result = await prisma.usuarios.findMany()
-    res.json({ message: "Success", data: result })
+    const result = await prisma.usuarios.findMany();
+    res.json({ message: "Success", data: result });
   } catch (e) {
-    console.log(e)
-    res.json({ message: "Fail", data: "Exception" })
+    console.log(e);
+    res.json({ message: "Fail", data: "Exception" });
   }
-}
+};
 
-ctrl.getUsuario  = async (req, res) => {
+ctrl.getUsuario = async (req, res) => {
   try {
-    const { id } = req.query
+    const { id } = req.query;
     const result = await prisma.usuarios.findUnique({
       where: {
-        id: Number(id)
+        id: Number(id),
       },
       include: {
-        Perfiles: true
-      }
-    })
-    res.json({ message: "Success", data: result })
+        Perfiles: true,
+      },
+    });
+    res.json({ message: "Success", data: result });
   } catch (e) {
-    console.log(e)
-    res.json({ message: "Fail", data: "Exception" })
+    console.log(e);
+    res.json({ message: "Fail", data: "Exception" });
   }
-}
+};
 
 ctrl.createUsuario = async (req, res) => {
   try {
     //  Ver el tipo de perfil que se está creando
-    const { perfil } = req.body
+    const { perfil } = req.body;
     switch (perfil) {
       case "interno":
         {
-          const { 
-            doc, a_paterno, a_materno, nombres,
-            email, celular, sexo,
-            codigo, facultad
-          } = req.body
-          
+          const {
+            doc,
+            a_paterno,
+            a_materno,
+            nombres,
+            email,
+            celular,
+            sexo,
+            codigo,
+            facultad,
+          } = req.body;
+
           const result = await prisma.usuarios.create({
             data: {
               username: (nombres[0] + a_paterno + a_materno[0]).toUpperCase(),
@@ -60,23 +66,21 @@ ctrl.createUsuario = async (req, res) => {
                   nombres: nombres,
                   codigo: codigo,
                   facultad: facultad,
-                  sexo: sexo
-                }
-              }
+                  sexo: sexo,
+                },
+              },
             },
             include: {
-              Perfiles: true
-            }
-          })
-          res.json({ message: "Success", data: result })
+              Perfiles: true,
+            },
+          });
+          res.json({ message: "Success", data: result });
         }
         break;
       case "externo":
         {
-          const { 
-            doc, a_paterno, a_materno, nombres,
-            email, celular, sexo,
-          } = req.body
+          const { doc, a_paterno, a_materno, nombres, email, celular, sexo } =
+            req.body;
 
           const result = await prisma.usuarios.create({
             data: {
@@ -91,23 +95,20 @@ ctrl.createUsuario = async (req, res) => {
                   a_paterno: a_paterno,
                   a_materno: a_materno,
                   nombres: nombres,
-                  sexo: sexo
-                }
-              }
+                  sexo: sexo,
+                },
+              },
             },
             include: {
-              Perfiles: true
-            }
-          })
-          res.json({ message: "Success", data: result })
+              Perfiles: true,
+            },
+          });
+          res.json({ message: "Success", data: result });
         }
         break;
       case "juridico":
         {
-          const {
-            ruc, razon_social,
-            email, celular
-          } = req.body
+          const { ruc, razon_social, email, celular } = req.body;
 
           const result = await prisma.usuarios.create({
             data: {
@@ -119,131 +120,138 @@ ctrl.createUsuario = async (req, res) => {
                 create: {
                   celular: celular,
                   ruc: ruc,
-                  razon_social: razon_social
-                }
-              }
+                  razon_social: razon_social,
+                },
+              },
             },
             include: {
-              Perfiles: true
-            }
-          })
-          res.json({ message: "Success", data: result })
+              Perfiles: true,
+            },
+          });
+          res.json({ message: "Success", data: result });
         }
         break;
       default:
-        res.json({ message: "Fail", data: "Perfil no existe"})
+        res.json({ message: "Fail", data: "Perfil no existe" });
         break;
     }
   } catch (e) {
-    console.log(e)
-    res.json({ message: "Fail", data: "Exception" })
+    console.log(e);
+    res.json({ message: "Fail", data: "Exception" });
   }
-}
+};
 
-ctrl.disableUsuario  = async (req, res) => {
+ctrl.disableUsuario = async (req, res) => {
   try {
-    const { id } = req.query
+    const { id } = req.query;
     await prisma.usuarios.update({
       where: {
-        id: Number(id)
+        id: Number(id),
       },
       data: {
-        estado: "bloqueado"
-      }
-    })
-    res.json({ message: "Success", data: "Usuario con id " + id + " bloqueado." })
+        estado: "bloqueado",
+      },
+    });
+    res.json({
+      message: "Success",
+      data: "Usuario con id " + id + " bloqueado.",
+    });
   } catch (e) {
-    console.log(e)
-    res.json({ message: "Fail", data: "Exception" })
+    console.log(e);
+    res.json({ message: "Fail", data: "Exception" });
   }
-}
+};
 
-ctrl.enableUsuario  = async (req, res) => {
+ctrl.enableUsuario = async (req, res) => {
   try {
-    const { id } = req.query
+    const { id } = req.query;
     await prisma.usuarios.update({
       where: {
-        id: Number(id)
+        id: Number(id),
       },
       data: {
-        estado: "activado"
-      }
-    })
-    res.json({ message: "Success", data: "Usuario con id " + id + " activado." })
+        estado: "activado",
+      },
+    });
+    res.json({
+      message: "Success",
+      data: "Usuario con id " + id + " activado.",
+    });
   } catch (e) {
-    console.log(e)
-    res.json({ message: "Fail", data: "Exception" })
+    console.log(e);
+    res.json({ message: "Fail", data: "Exception" });
   }
-}
+};
 
-ctrl.changePass  = async (req, res) => {
+ctrl.changePass = async (req, res) => {
   try {
-    const { id } = req.query
-    const { oldPass, newPass } = req.body
+    const { id } = req.query;
+    const { oldPass, newPass } = req.body;
     const user = await prisma.usuarios.findUnique({
       where: {
         id: Number(id),
-        password: oldPass
-      }
-    })
+        password: oldPass,
+      },
+    });
     if (user != null) {
       if (user.estado == "activado") {
         await prisma.usuarios.update({
           where: {
-            id: Number(id)
+            id: Number(id),
           },
           data: {
-            password: newPass
-          }
-        })
-        res.json({ message: "Success", data: "Contraseña actualizada" })
+            password: newPass,
+          },
+        });
+        res.json({ message: "Success", data: "Contraseña actualizada" });
       } else {
-        res.json({ message: "Fail", data: "Usuario bloqueado" })
+        res.json({ message: "Fail", data: "Usuario bloqueado" });
       }
     } else {
-      res.json({ message: "Fail", data: "Contraseña incorrecta" })
+      res.json({ message: "Fail", data: "Contraseña incorrecta" });
     }
   } catch (e) {
-    console.log(e)
-    res.json({ message: "Fail", data: "Exception" })
+    console.log(e);
+    res.json({ message: "Fail", data: "Exception" });
   }
-}
+};
 
-ctrl.restorePass  = async (req, res) => {
+ctrl.restorePass = async (req, res) => {
   try {
-    const { id } = req.query
+    const { id } = req.query;
     const usuario = await prisma.usuarios.findUnique({
       where: {
-        id: Number(id)
+        id: Number(id),
       },
       select: {
         perfil: true,
         Perfiles: {
           select: {
             doc: true,
-            ruc: true
-          }
-        }
-      }
-    })
-    const newPass = ["interno", "externo"].includes(usuario.perfil) ? usuario.Perfiles.doc : usuario.Perfiles.ruc
+            ruc: true,
+          },
+        },
+      },
+    });
+    const newPass = ["interno", "externo"].includes(usuario.perfil)
+      ? usuario.Perfiles.doc
+      : usuario.Perfiles.ruc;
     const result = await prisma.usuarios.update({
       where: {
-        id: Number(id)
+        id: Number(id),
       },
       data: {
-        password: newPass
-      }
-    })
-    res.json({ message: "Success", data: result })
+        password: newPass,
+      },
+    });
+    res.json({ message: "Success", data: result });
   } catch (e) {
-    console.log(e)
-    res.json({ message: "Fail", data: "Exception" })
+    console.log(e);
+    res.json({ message: "Fail", data: "Exception" });
   }
-}
+};
 
-export default ctrl
-
+export default ctrl;
 
 /*  Ejemplos de JSON PARA LAS REQUEST
 CREAR USUARIO INTERNO:

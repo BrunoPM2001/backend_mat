@@ -1,12 +1,13 @@
 import { PrismaClient } from "@prisma/client";
-import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3"
+import { DeleteObjectCommand, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3"
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import s3Client from "../../config/s3client.js"
 
 const prisma = new PrismaClient();
 const ctrl = {};
 
-//  Funciones - TODO * USE JWT * No volver a cargar un archivo si es que está vacío en caso de actualizar requisito
-ctrl.getRequisitosTramite = async (req, res) => {
+//  Funciones - TODO * USE JWT
+ctrl.getRequisitosTramiteAdmin = async (req, res) => {
   try {
     const { id } = req.query;
     const result = await prisma.requisitos.findMany({
@@ -14,7 +15,61 @@ ctrl.getRequisitosTramite = async (req, res) => {
         id_tramite: Number(id),
       },
     });
-    res.json({ message: "Success", data: result });
+    const requisitos = await Promise.all(result.map(async(requisito) => {
+      if (requisito.plantilla == true) {
+        return {
+          ...requisito,
+          url: await getSignedUrl(s3Client, new GetObjectCommand({
+            Bucket: process.env.BUCKET_PLANTILLAS,
+            Key: requisito.id_tramite + "/Req_" + requisito.id
+          }), 
+          {
+            expiresIn: 600
+          }),
+        }
+      } else {
+        return {
+          ...requisito,
+          url: null
+        }
+      }
+    }));
+    res.json({ message: "Success", data: requisitos });
+  } catch (e) {
+    console.log(e);
+    res.json({ message: "Fail", data: "Exception" });
+  }
+};
+
+ctrl.getRequisitosTramite = async (req, res) => {
+  try {
+    const { id } = req.query;
+    const result = await prisma.requisitos.findMany({
+      where: {
+        id_tramite: Number(id),
+        activo: true
+      },
+    });
+    const requisitos = await Promise.all(result.map(async(requisito) => {
+      if (requisito.plantilla == true) {
+        return {
+          ...requisito,
+          url: await getSignedUrl(s3Client, new GetObjectCommand({
+            Bucket: process.env.BUCKET_PLANTILLAS,
+            Key: requisito.id_tramite + "/Req_" + requisito.id
+          }), 
+          {
+            expiresIn: 600
+          }),
+        }
+      } else {
+        return {
+          ...requisito,
+          url: null
+        }
+      }
+    }));
+    res.json({ message: "Success", data: requisitos });
   } catch (e) {
     console.log(e);
     res.json({ message: "Fail", data: "Exception" });

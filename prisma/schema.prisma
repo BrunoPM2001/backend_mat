@@ -34,9 +34,9 @@ model Requisitos {
   id_tramite          Int
   nombre              String                @db.VarChar(255)
   descripcion         String                @db.VarChar(255)
-  tipo                Requisitos_tipo
   formato             String                @db.VarChar(255)
-  plantilla           String?               @db.VarChar(255)
+  maxSizeKb           Int
+  plantilla           Boolean               @default(false)
   obligatorio         Boolean
   activo              Boolean               @default(true)
   Tramites            Tramites              @relation(fields: [id_tramite], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Requisitos_ibfk_1")
@@ -46,12 +46,12 @@ model Requisitos {
 }
 
 model RequisitosSolicitud {
-  id           Int         @id @default(autoincrement())
-  id_solicitud Int
-  id_requisito Int
-  contenido    String      @db.VarChar(255)
-  Solicitudes  Solicitudes @relation(fields: [id_solicitud], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "RequisitosSolicitud_ibfk_1")
-  Requisitos   Requisitos  @relation(fields: [id_requisito], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "RequisitosSolicitud_ibfk_2")
+  id            Int         @id @default(autoincrement())
+  id_solicitud  Int
+  id_requisito  Int
+  nombreArchivo String      @db.VarChar(255)
+  Solicitudes   Solicitudes @relation(fields: [id_solicitud], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "RequisitosSolicitud_ibfk_1")
+  Requisitos    Requisitos  @relation(fields: [id_requisito], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "RequisitosSolicitud_ibfk_2")
 
   @@index([id_requisito], map: "id_requisito")
   @@index([id_solicitud], map: "id_solicitud")
@@ -104,11 +104,6 @@ model CategoriasTramite {
   id       Int        @id @default(autoincrement())
   nombre   String     @db.VarChar(255)
   Tramites Tramites[]
-}
-
-enum Requisitos_tipo {
-  texto
-  adjunto
 }
 
 enum Usuarios_perfil {

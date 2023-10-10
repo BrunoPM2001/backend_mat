@@ -5,6 +5,8 @@ import { upload, verifySize } from "../../config/multer.js";
 const router = Router();
 
 //  Rutas
+router.get("/getRequisitosTramiteAdmin", ctrl.getRequisitosTramiteAdmin);
+
 router.get("/getRequisitosTramite", ctrl.getRequisitosTramite);
 
 router.post("/createRequisitoTramite", upload.single('file'), verifySize, ctrl.createRequisitoTramite);

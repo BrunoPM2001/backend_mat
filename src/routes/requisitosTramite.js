@@ -9,6 +9,8 @@ router.get("/getRequisitosTramite", ctrl.getRequisitosTramite);
 
 router.post("/createRequisitoTramite", upload.single('file'), verifySize, ctrl.createRequisitoTramite);
 
+router.put("/updatePlantillaRequisito", upload.single('file'), verifySize, ctrl.updatePlantillaRequisito)
+
 router.put("/disableRequisitoTramite", ctrl.disableRequisitoTramite);
 
 router.put("/enableRequisitoTramite", ctrl.enableRequisitoTramite);

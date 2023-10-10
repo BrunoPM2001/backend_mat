@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import { PutObjectCommand } from "@aws-sdk/client-s3"
+import s3Client from "../../config/s3client.js"
 
 const prisma = new PrismaClient();
 const ctrl = {};
@@ -21,27 +23,37 @@ ctrl.getRequisitosTramite = async (req, res) => {
 
 ctrl.createRequisitoTramite = async (req, res) => {
   try {
-    const {
-      tramiteId,
-      nombre,
-      descripcion,
-      tipo,
-      formato,
-      plantilla,
-      obligatorio,
-    } = req.body;
-    const result = await prisma.requisitos.create({
-      data: {
-        id_tramite: tramiteId,
-        nombre: nombre,
-        descripcion: descripcion,
-        tipo: tipo,
-        formato: formato,
-        plantilla: plantilla,
-        obligatorio: obligatorio,
-      },
-    });
-    res.json({ message: "Success", data: result });
+    const plantilla = req.body.plantilla == "true" ? true : false;
+    if (plantilla) {
+      const {
+        tramiteId,
+        nombre,
+        descripcion,
+        tipo,
+        formato,
+        obligatorio,
+      } = req.body;
+      const result = await prisma.requisitos.create({
+        data: {
+          id_tramite: Number(tramiteId),
+          nombre: nombre,
+          descripcion: descripcion,
+          tipo: tipo,
+          formato: formato,
+          obligatorio: Boolean(obligatorio),
+        },
+      });
+      const file = req.file;
+      await s3Client.send(new PutObjectCommand({
+        Bucket: process.env.BUCKET_PLANTILLAS,
+        Key: result.id_tramite + "/Req_" + result.id,
+        Body: file.buffer,
+        ContentType: file.mimetype
+      }))
+      res.json({ message: "Success", data: result });
+    } else {
+      res.json({ message: "Success", data: "Solo se insertará en la DB" });
+    }
   } catch (e) {
     console.log(e);
     res.json({ message: "Fail", data: "Exception" });

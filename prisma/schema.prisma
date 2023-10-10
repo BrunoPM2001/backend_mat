@@ -36,7 +36,7 @@ model Requisitos {
   descripcion         String                @db.VarChar(255)
   tipo                Requisitos_tipo
   formato             String                @db.VarChar(255)
-  plantilla           String                @db.VarChar(255)
+  plantilla           String?               @db.VarChar(255)
   obligatorio         Boolean
   activo              Boolean               @default(true)
   Tramites            Tramites              @relation(fields: [id_tramite], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Requisitos_ibfk_1")

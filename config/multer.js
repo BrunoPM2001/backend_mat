@@ -1,7 +1,7 @@
 import multer from "multer";
 
 const storage = multer.memoryStorage();
-const upload = multer({
+const uploadPlantillas = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
     if ([
@@ -14,6 +14,21 @@ const upload = multer({
     } else {
       cb(null, false);
     }
+  }
+});
+
+const uploadRequisitos = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    // if ([
+    //   "application/pdf", 
+    //   "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    // ].includes(file.mimetype)
+    // ) {
+      cb(null, true);
+    // } else {
+    //   cb(null, false);
+    // }
   }
 });
 
@@ -32,4 +47,4 @@ const verifySize = (req, res, next) => {
   }
 }
 
-export { upload, verifySize };
+export { uploadPlantillas, uploadRequisitos, verifySize };

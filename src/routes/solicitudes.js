@@ -3,7 +3,7 @@ import { Router } from "express";
 
 const router = Router();
 
-//  Rutas
+//  Rutas para user
 router.get("/getSolicitudes", (req, res) => {
   res.json({ message: "Success", data: "Solicitudes" })
 });

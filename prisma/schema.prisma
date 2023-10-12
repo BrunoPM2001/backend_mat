@@ -50,7 +50,7 @@ model RequisitosSolicitud {
   id_solicitud  Int
   id_requisito  Int
   nombreArchivo String      @db.VarChar(255)
-  Solicitudes   Solicitudes @relation(fields: [id_solicitud], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "RequisitosSolicitud_ibfk_1")
+  Solicitudes   Solicitudes @relation(fields: [id_solicitud], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "RequisitosSolicitud_ibfk_1")
   Requisitos    Requisitos  @relation(fields: [id_requisito], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "RequisitosSolicitud_ibfk_2")
 
   @@index([id_requisito], map: "id_requisito")
@@ -61,6 +61,7 @@ model Solicitudes {
   id                  Int                   @id @default(autoincrement())
   id_tramite          Int
   id_usuario          Int
+  estado              Solicitudes_estado?   @default(Pendiente)
   fecha_solicitud     DateTime?             @default(dbgenerated("(now())")) @db.Timestamp(0)
   RequisitosSolicitud RequisitosSolicitud[]
   Usuarios            Usuarios              @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Solicitudes_ibfk_1")
@@ -115,4 +116,11 @@ enum Usuarios_perfil {
 enum Perfiles_sexo {
   Masculino
   Femenino
+}
+
+enum Solicitudes_estado {
+  Pendiente
+  Aprobado
+  Observado
+  Rechazado
 }

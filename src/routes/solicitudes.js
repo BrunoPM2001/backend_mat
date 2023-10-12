@@ -4,7 +4,7 @@ import { uploadRequisitos, verifySize } from "../../config/multer.js";
 
 const router = Router();
 
-//  Rutas para user
+//  Rutas para user - TODO estimar límite de requisitos - IMPLEMENTAR SUBSANAR
 router.get("/getSolicitudes", ctrl.getSolicitudes);
 
 router.post("/createSolicitud", uploadRequisitos.fields([
@@ -24,8 +24,6 @@ router.put("/subsanarSolicitud", (req, res) => {
   res.json({ message: "Success", data: "Subsanar solicitud" })
 });
 
-router.delete("/cancelarTramite", (req, res) => {
-  res.json({ message: "Success", data: "Solicitud eliminada" })
-});
+router.delete("/deleteSolicitud", ctrl.deleteSolicitud);
 
 export default router;

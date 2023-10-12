@@ -18,7 +18,7 @@ router.post("/createSolicitud", uploadRequisitos.fields([
   {name: "requisito_8", maxCount: 1},
   {name: "requisito_9", maxCount: 1},
   {name: "requisito_10", maxCount: 1},
-]),ctrl.createSolicitud);
+]), ctrl.createSolicitud);
 
 router.put("/subsanarSolicitud", (req, res) => {
   res.json({ message: "Success", data: "Subsanar solicitud" })

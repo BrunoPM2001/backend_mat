@@ -22,4 +22,7 @@ router.put("/changePass", ctrl.changePass);
 
 router.put("/restorePass", ctrl.restorePass);
 
+//  Login
+router.put("/login", ctrl.login);
+
 export default router;

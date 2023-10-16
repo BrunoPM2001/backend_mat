@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 const prisma = new PrismaClient();
 const ctrl = {};
 
-//  Funciones - TODO * USE JWT
+//  Funciones
 ctrl.getCategoriasTramite = async (req, res) => {
   try {
     const token = req.header("Authorization");

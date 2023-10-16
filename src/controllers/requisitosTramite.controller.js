@@ -11,7 +11,7 @@ import s3Client from "../../config/s3client.js";
 const prisma = new PrismaClient();
 const ctrl = {};
 
-//  Funciones - TODO * USE JWT
+//  Funciones - TODO * EVITAR QUE LA APP CRASHEE POR PRISMA CLIENT
 
 //  Retorna los requisitos independientemente de su estado
 ctrl.getRequisitosTramiteAdmin = async (req, res) => {

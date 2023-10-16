@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 const ctrl = {};
@@ -6,8 +7,28 @@ const ctrl = {};
 //  Funciones - TODO * USE JWT * REESCRUCTURAR LA QUERY DE CREAR
 ctrl.getUsuarios = async (req, res) => {
   try {
-    const result = await prisma.usuarios.findMany();
-    res.json({ message: "Success", data: result });
+    const token = req.header("Authorization");
+    jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, payload) => {
+      if (err) {
+        res.json({ message: "Fail", data: "Error en token" });
+      } else {
+        if (payload.permisos >= 4) {
+          const result = await prisma.usuarios.findMany({
+            select: {
+              id: true,
+              username: true,
+              email: true,
+              perfil: true,
+              activo: true,
+              fecha_registro: true,
+            },
+          });
+          res.json({ message: "Success", data: result });
+        } else {
+          res.json({ message: "Fail", data: "Permisos insuficientes" });
+        }
+      }
+    });
   } catch (e) {
     console.log(e);
     res.json({ message: "Fail", data: "Exception" });
@@ -245,6 +266,76 @@ ctrl.restorePass = async (req, res) => {
       },
     });
     res.json({ message: "Success", data: result });
+  } catch (e) {
+    console.log(e);
+    res.json({ message: "Fail", data: "Exception" });
+  }
+};
+
+ctrl.login = async (req, res) => {
+  try {
+    const { usuario, password, administrativo } = req.body;
+    //  Manejar el tipo de usuario a logear
+    if (!administrativo) {
+      const result = await prisma.usuarios.findUnique({
+        where: {
+          username: usuario,
+          password: password,
+        },
+        select: {
+          activo: true,
+          username: true,
+          email: true,
+          perfil: true,
+        },
+      });
+      //  Validar usuario, contraseña y estado
+      if (result == null) {
+        res.json({
+          message: "Fail",
+          data: "Usuario y/o contraseña incorrecto(s)",
+        });
+      } else if (!result.activo) {
+        res.json({ message: "Fail", data: "Usuario bloqueado" });
+      } else {
+        const token = jwt.sign(result, process.env.JWT_SECRET_KEY, {
+          expiresIn: 120,
+        });
+        res.json({ message: "Success", data: result, token: token });
+      }
+    } else {
+      const result = await prisma.usuariosAdministrativos.findUnique({
+        where: {
+          username: usuario,
+          password: password,
+        },
+        select: {
+          username: true,
+          activo: true,
+          email: true,
+          permisos: true,
+          Dependencias: {
+            select: {
+              nombre: true,
+            },
+          },
+        },
+      });
+      //  Validar usuario, contraseña y estado
+      if (result == null) {
+        res.json({
+          message: "Fail",
+          data: "Usuario y/o contraseña incorrecto(s)",
+        });
+      } else if (!result.activo) {
+        res.json({ message: "Fail", data: "Usuario bloqueado" });
+      } else {
+        const token = jwt.sign(result, process.env.JWT_SECRET_KEY, {
+          expiresIn: 120,
+        });
+        res.json({ message: "Success", data: result, token: token });
+      }
+    }
   } catch (e) {
     console.log(e);
     res.json({ message: "Fail", data: "Exception" });

@@ -29,6 +29,7 @@ ctrl.getRequisitosTramiteAdmin = async (req, res) => {
               id_tramite: Number(id),
             },
           });
+          //  Incluir url de descarga de archivo de s3 en la respuesta de prisma
           const requisitos = await Promise.all(
             result.map(async (requisito) => {
               if (requisito.plantilla == true) {
@@ -41,7 +42,7 @@ ctrl.getRequisitosTramiteAdmin = async (req, res) => {
                       Key: requisito.id_tramite + "/Req_" + requisito.id,
                     }),
                     {
-                      expiresIn: 600,
+                      expiresIn: 3600,
                     }
                   ),
                 };

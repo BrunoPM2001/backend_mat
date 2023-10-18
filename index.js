@@ -4,8 +4,9 @@ import router_usuarios from "./src/routes/usuarios.js";
 import router_dependencias from "./src/routes/dependencias.js";
 import router_categoriasTramite from "./src/routes/categoriasTramite.js";
 import router_tramites from "./src/routes/tramites.js";
-import router_requisitos from "./src/routes/requisitosTramite.js";
+import router_requisitosTramite from "./src/routes/requisitosTramite.js";
 import router_solicitudes from "./src/routes/solicitudes.js";
+import router_requisitosSolicitud from "./src/routes/requisitosSolicitud.js";
 
 const app = express();
 
@@ -18,8 +19,9 @@ app.use("/usuarios", router_usuarios);
 app.use("/dependencias", router_dependencias);
 app.use("/categoriasTramite", router_categoriasTramite);
 app.use("/tramites", router_tramites);
-app.use("/requisitos", router_requisitos);
+app.use("/requisitos", router_requisitosTramite);
 app.use("/solicitudes", router_solicitudes);
+app.use("/reqSolicitud", router_requisitosSolicitud);
 
 //  Corriendo servicio
 app.listen(3000, () => console.log("Listening..."));

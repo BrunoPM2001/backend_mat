@@ -1,11 +1,11 @@
 import { PrismaClient } from "@prisma/client";
-import jwt from "jsonwebtoken";
 import {
-  DeleteObjectCommand,
-  PutObjectCommand,
   GetObjectCommand,
-  DeleteObjectsCommand,
+  PutObjectCommand,
+  DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import jwt from "jsonwebtoken";
 import s3Client from "../../config/s3client.js";
 
 const prisma = new PrismaClient();
@@ -27,6 +27,64 @@ ctrl.getSolicitudes = async (req, res) => {
             },
           });
           res.json({ message: "Success", data: result });
+        } else {
+          res.json({ message: "Fail", data: "Permisos insuficientes" });
+        }
+      }
+    });
+  } catch (e) {
+    console.log(e);
+    res.json({ message: "Fail", data: "Exception" });
+  }
+};
+
+ctrl.getAdjuntosSolicitud = async (req, res) => {
+  try {
+    const token = req.header("Authorization");
+    jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, payload) => {
+      if (err) {
+        res.json({ message: "Fail", data: "Error en token" });
+      } else {
+        //  Validar premsos del usuario
+        if (payload.perfil != null) {
+          const { id } = req.query;
+          const result = await prisma.requisitosSolicitud.findMany({
+            where: {
+              id_solicitud: Number(id),
+              Solicitudes: {
+                id_usuario: Number(payload.id),
+              },
+            },
+            select: {
+              id_solicitud: true,
+              nombreArchivo: true,
+              Requisitos: {
+                select: {
+                  nombre: true,
+                  descripcion: true,
+                },
+              },
+            },
+          });
+          //  Generar enlace para descargar el archivo de S3
+          const adjuntos = await Promise.all(
+            result.map(async (element) => {
+              return {
+                ...element,
+                url: await getSignedUrl(
+                  s3Client,
+                  new GetObjectCommand({
+                    Bucket: process.env.BUCKET_REQUISITOS_SOLICITUD,
+                    Key: element.id_solicitud + "/" + element.nombreArchivo,
+                  }),
+                  {
+                    expiresIn: 3600,
+                  }
+                ),
+              };
+            })
+          );
+          res.json({ message: "Success", data: adjuntos });
         } else {
           res.json({ message: "Fail", data: "Permisos insuficientes" });
         }
@@ -155,7 +213,7 @@ ctrl.deleteSolicitud = async (req, res) => {
               await s3Client.send(
                 new DeleteObjectCommand({
                   Bucket: process.env.BUCKET_REQUISITOS_SOLICITUD,
-                  Key: reqDel.id + "/" + "requisito_" + ele.id_requisito,
+                  Key: reqDel.id + "/" + ele.nombreArchivo,
                 })
               );
             });

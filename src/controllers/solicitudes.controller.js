@@ -59,25 +59,26 @@ ctrl.createSolicitud = async (req, res) => {
           });
           //  Validar: Obligatorio? => Tipo de archivo => Tamaño máx? => Subir archivo
           for (let i = 0; i < req_tramite.length; i++) {
-            let req = req_tramite[i];
+            let requisito = req_tramite[i];
             let file = files["requisito_" + (i + 1)];
             if (file != undefined) {
-              if (file[0].size <= req.maxSizeKb) {
+              if (file[0].size <= requisito.maxSizeKb) {
                 validFiles.push(i); //  Archivos que están ok
               } else {
                 res.json({
                   message: "Fail",
                   data:
                     "El requisito con id " +
-                    req.id +
+                    requisito.id +
                     " supera el tamaño máximo.",
                 });
                 return;
               }
-            } else if (req.obligatorio) {
+            } else if (requisito.obligatorio) {
               res.json({
                 message: "Fail",
-                data: "El requisito con id " + req.id + " es obligatorio.",
+                data:
+                  "El requisito con id " + requisito.id + " es obligatorio.",
               });
               return;
             }

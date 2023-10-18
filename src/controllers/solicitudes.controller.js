@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import jwt from "jsonwebtoken";
+import jwt, { JsonWebTokenError } from "jsonwebtoken";
 import {
   DeleteObjectCommand,
   PutObjectCommand,
@@ -26,6 +26,28 @@ ctrl.getSolicitudes = async (req, res) => {
               id_usuario: Number(payload.id),
             },
           });
+          res.json({ message: "Success", data: result });
+        } else {
+          res.json({ message: "Fail", data: "Permisos insuficientes" });
+        }
+      }
+    });
+  } catch (e) {
+    console.log(e);
+    res.json({ message: "Fail", data: "Exception" });
+  }
+};
+
+ctrl.getAdjuntosSolicitud = async (req, res) => {
+  try {
+    const token = req.header("Authorization");
+    jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, payload) => {
+      if (err) {
+        res.json({ message: "Fail", data: "Error en token" });
+      } else {
+        //  Validar premsos del usuario
+        if (payload.perfil != null) {
+          const result = await prisma.requisitosSolicitud.findMany({});
           res.json({ message: "Success", data: result });
         } else {
           res.json({ message: "Fail", data: "Permisos insuficientes" });

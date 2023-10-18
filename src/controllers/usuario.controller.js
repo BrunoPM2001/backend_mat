@@ -407,6 +407,7 @@ ctrl.login = async (req, res) => {
           activo: true,
           Dependencias: {
             select: {
+              id: true,
               nombre: true,
             },
           },

@@ -238,4 +238,50 @@ ctrl.deleteSolicitud = async (req, res) => {
   }
 };
 
+//  Administrativos
+ctrl.acceptSolicitud = async (req, res) => {
+  try {
+    const token = req.header("Authorization");
+    jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, payload) => {
+      if (err) {
+        res.json({ message: "Fail", data: "Error en token" });
+      } else {
+        const { id } = req.query;
+        //  Validar permisos del usuario y ver si hay una solicitud
+        if (payload.permisos == 2) {
+          const result = await prisma.solicitudes.update({
+            where: {
+              id: Number(id),
+              Tramites: {
+                id_dependencia: Number(payload.Dependencias.id),
+              },
+            },
+            data: {
+              estado: "Aprobado",
+            },
+          });
+          //  Validar si se hizo el cambio
+          console.log(result);
+        } else if (payload.permisos == 3) {
+          const result = await prisma.solicitudes.update({
+            where: {
+              id: Number(id),
+            },
+            data: {
+              estado: "Rechazado",
+            },
+          });
+          //  Validar si se hizo el cambio
+          console.log(result);
+        } else {
+          res.json({ message: "Fail", data: "Permisos insuficientes" });
+        }
+      }
+    });
+  } catch (e) {
+    console.log(e);
+    res.json({ message: "Fail", data: "Exception" });
+  }
+};
+
 export default ctrl;

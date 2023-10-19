@@ -249,30 +249,52 @@ ctrl.acceptSolicitud = async (req, res) => {
         const { id } = req.query;
         //  Validar permisos del usuario y ver si hay una solicitud
         if (payload.permisos == 2) {
-          const result = await prisma.solicitudes.update({
+          const exist = await prisma.solicitudes.count({
             where: {
               id: Number(id),
               Tramites: {
                 id_dependencia: Number(payload.Dependencias.id),
               },
             },
-            data: {
-              estado: "Aprobado",
-            },
           });
-          //  Validar si se hizo el cambio
-          console.log(result);
-        } else if (payload.permisos == 3) {
-          const result = await prisma.solicitudes.update({
+          if (exist == 0) {
+            res.json({
+              message: "Fail",
+              data: "No hay acceso a esa solicitud",
+            });
+            return;
+          }
+          await prisma.solicitudes.update({
             where: {
               id: Number(id),
             },
             data: {
-              estado: "Rechazado",
+              estado: "Aprobado",
             },
           });
-          //  Validar si se hizo el cambio
-          console.log(result);
+          res.json({ message: "Success", data: "Solicitud aprobada" });
+        } else if (payload.permisos == 3) {
+          const exist = await prisma.solicitudes.count({
+            where: {
+              id: Number(id),
+            },
+          });
+          if (exist == 0) {
+            res.json({
+              message: "Fail",
+              data: "No hay acceso a esa solicitud",
+            });
+            return;
+          }
+          await prisma.solicitudes.update({
+            where: {
+              id: Number(id),
+            },
+            data: {
+              estado: "Aprobado",
+            },
+          });
+          res.json({ message: "Success", data: "Solicitud aprobada" });
         } else {
           res.json({ message: "Fail", data: "Permisos insuficientes" });
         }

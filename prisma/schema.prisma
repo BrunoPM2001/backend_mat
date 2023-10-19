@@ -63,7 +63,9 @@ model Solicitudes {
   id_tramite          Int
   id_usuario          Int
   estado              Solicitudes_estado?   @default(Pendiente)
-  fecha_solicitud     DateTime?             @default(dbgenerated("(now())")) @db.Timestamp(0)
+  observacion         String?               @db.VarChar(500)
+  fecha_solicitud     DateTime              @default(dbgenerated("(now())")) @db.Timestamp(0)
+  fecha_revision      DateTime?             @db.Timestamp(0)
   RequisitosSolicitud RequisitosSolicitud[]
   Usuarios            Usuarios              @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Solicitudes_ibfk_1")
   Tramites            Tramites              @relation(fields: [id_tramite], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Solicitudes_ibfk_2")

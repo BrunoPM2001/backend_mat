@@ -31,8 +31,6 @@ router.delete("/deleteSolicitud", ctrl.deleteSolicitud);
 //  Rutas para administrativos
 router.put("/accept", ctrl.acceptSolicitud);
 
-router.put("/refuse", (req, res) => {
-  res.json({ message: "Solicitud rechazada" });
-});
+router.put("/refuse", ctrl.refuseSolicitud);
 
 export default router;

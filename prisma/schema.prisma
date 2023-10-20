@@ -64,8 +64,8 @@ model Solicitudes {
   id_usuario          Int
   estado              Solicitudes_estado?   @default(Pendiente)
   observacion         String?               @db.VarChar(500)
-  fecha_solicitud     DateTime              @default(dbgenerated("(now())")) @db.Timestamp(0)
-  fecha_revision      DateTime?             @db.Timestamp(0)
+  fecha_solicitud     DateTime?             @default(dbgenerated("(now())")) @db.Timestamp(0)
+  fecha_actualizacion DateTime?             @db.Timestamp(0)
   RequisitosSolicitud RequisitosSolicitud[]
   Usuarios            Usuarios              @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Solicitudes_ibfk_1")
   Tramites            Tramites              @relation(fields: [id_tramite], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Solicitudes_ibfk_2")
@@ -113,6 +113,10 @@ model CategoriasTramite {
 model UsuariosAdministrativos {
   id             Int          @id @default(autoincrement())
   id_dependencia Int
+  a_paterno      String?      @db.VarChar(255)
+  a_materno      String?      @db.VarChar(255)
+  nombres        String?      @db.VarChar(255)
+  doc            String?      @db.VarChar(255)
   username       String       @unique(map: "username") @db.VarChar(40)
   password       String       @db.VarChar(255)
   email          String       @unique(map: "email") @db.VarChar(50)

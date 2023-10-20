@@ -434,6 +434,38 @@ ctrl.login = async (req, res) => {
   }
 };
 
+//  Usuarios administrativos
+ctrl.createAdministrativo = async (req, res) => {
+  try {
+    const {
+      id_dependencia,
+      a_paterno,
+      a_materno,
+      nombres,
+      doc,
+      email,
+      permisos,
+    } = req.body;
+    const result = await prisma.usuariosAdministrativos.create({
+      data: {
+        id_dependencia: Number(id_dependencia),
+        doc: doc,
+        a_paterno: a_paterno,
+        a_materno: a_materno,
+        nombres: nombres,
+        username: (nombres[0] + a_paterno + a_materno[0]).toUpperCase(),
+        password: doc,
+        email: email,
+        permisos: permisos,
+      },
+    });
+    res.json({ message: "Success", data: result });
+  } catch (e) {
+    console.log(e);
+    res.json({ message: "Fail", data: "Exception" });
+  }
+};
+
 export default ctrl;
 
 /*  Ejemplos de JSON PARA LAS REQUEST

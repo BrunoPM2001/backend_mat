@@ -25,4 +25,7 @@ router.put("/restorePass", ctrl.restorePass);
 //  Login
 router.put("/login", ctrl.login);
 
+//  Administrativos
+router.post("/createAdministrativo", ctrl.createAdministrativo);
+
 export default router;

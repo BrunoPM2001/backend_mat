@@ -265,12 +265,16 @@ ctrl.acceptSolicitud = async (req, res) => {
             });
             return;
           }
+          const fecha = new Date(
+            Date.now() + process.env.OFFSET * 60 * 1000
+          ).toISOString();
           await prisma.solicitudes.update({
             where: {
               id: Number(id),
             },
             data: {
               estado: "Aprobado",
+              fecha_actualizacion: fecha,
             },
           });
           res.json({ message: "Success", data: "Solicitud aprobada" });
@@ -288,12 +292,16 @@ ctrl.acceptSolicitud = async (req, res) => {
             });
             return;
           }
+          const fecha = new Date(
+            Date.now() + process.env.OFFSET * 60 * 1000
+          ).toISOString();
           await prisma.solicitudes.update({
             where: {
               id: Number(id),
             },
             data: {
               estado: "Aprobado",
+              fecha_actualizacion: fecha,
             },
           });
           res.json({ message: "Success", data: "Solicitud aprobada" });
@@ -334,6 +342,9 @@ ctrl.refuseSolicitud = async (req, res) => {
             });
             return;
           }
+          const fecha = new Date(
+            Date.now() + process.env.OFFSET * 60 * 1000
+          ).toISOString();
           await prisma.solicitudes.update({
             where: {
               id: Number(id),
@@ -341,6 +352,7 @@ ctrl.refuseSolicitud = async (req, res) => {
             data: {
               estado: "Rechazado",
               observacion: obs,
+              fecha_actualizacion: fecha,
             },
           });
           res.json({ message: "Success", data: "Solicitud rechazada" });
@@ -358,7 +370,9 @@ ctrl.refuseSolicitud = async (req, res) => {
             });
             return;
           }
-          const fecha = new Date();
+          const fecha = new Date(
+            Date.now() + process.env.OFFSET * 60 * 1000
+          ).toISOString();
           await prisma.solicitudes.update({
             where: {
               id: Number(id),
@@ -366,6 +380,7 @@ ctrl.refuseSolicitud = async (req, res) => {
             data: {
               estado: "Rechazado",
               observacion: obs,
+              fecha_actualizacion: fecha,
             },
           });
           res.json({ message: "Success", data: "Solicitud rechazada" });

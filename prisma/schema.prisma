@@ -142,6 +142,5 @@ enum Perfiles_sexo {
 enum Solicitudes_estado {
   Pendiente
   Aprobado
-  Observado
   Rechazado
 }

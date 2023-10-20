@@ -64,7 +64,7 @@ model Solicitudes {
   id_usuario          Int
   estado              Solicitudes_estado?   @default(Pendiente)
   observacion         String?               @db.VarChar(500)
-  fecha_solicitud     DateTime?             @default(dbgenerated("(now())")) @db.Timestamp(0)
+  fecha_solicitud     DateTime              @default(dbgenerated("(now())")) @db.Timestamp(0)
   fecha_actualizacion DateTime?             @db.Timestamp(0)
   RequisitosSolicitud RequisitosSolicitud[]
   Usuarios            Usuarios              @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Solicitudes_ibfk_1")
@@ -99,7 +99,7 @@ model Usuarios {
   email          String          @unique(map: "email") @db.VarChar(50)
   perfil         Usuarios_perfil
   activo         Boolean         @default(true)
-  fecha_registro DateTime?       @default(dbgenerated("(now())")) @db.DateTime(0)
+  fecha_registro DateTime        @default(dbgenerated("(now())")) @db.DateTime(0)
   Perfiles       Perfiles?
   Solicitudes    Solicitudes[]
 }
@@ -113,16 +113,16 @@ model CategoriasTramite {
 model UsuariosAdministrativos {
   id             Int          @id @default(autoincrement())
   id_dependencia Int
-  a_paterno      String?      @db.VarChar(255)
-  a_materno      String?      @db.VarChar(255)
-  nombres        String?      @db.VarChar(255)
-  doc            String?      @db.VarChar(255)
+  a_paterno      String       @db.VarChar(255)
+  a_materno      String       @db.VarChar(255)
+  nombres        String       @db.VarChar(255)
+  doc            String       @db.VarChar(255)
   username       String       @unique(map: "username") @db.VarChar(40)
   password       String       @db.VarChar(255)
   email          String       @unique(map: "email") @db.VarChar(50)
   permisos       Int          @default(0)
   activo         Boolean      @default(true)
-  fecha_registro DateTime?    @default(dbgenerated("(now())")) @db.DateTime(0)
+  fecha_registro DateTime     @default(dbgenerated("(now())")) @db.DateTime(0)
   Dependencias   Dependencias @relation(fields: [id_dependencia], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "UsuariosAdministrativos_ibfk_1")
 
   @@index([id_dependencia], map: "id_dependencia")

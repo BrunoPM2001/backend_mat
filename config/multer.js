@@ -51,9 +51,14 @@ const verifySize = (req, res, next) => {
 const verifyMultipleSize = (req, res, next) => {
   const files = req.files;
   for (let i = 1; i <= 10; i++) {
-    console.log(files["requisito_" + i]);
+    if (files["requisito_" + i] != undefined) {
+      if (files["requisito_" + i][0].size > 10240) {
+        res.json({ message: "Fail", data: "Archivo supera los 10 mb" });
+        return;
+      }
+    }
   }
-  // next();
+  next();
 };
 
 export { uploadPlantillas, uploadRequisitos, verifySize, verifyMultipleSize };

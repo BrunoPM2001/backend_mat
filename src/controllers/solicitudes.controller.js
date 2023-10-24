@@ -11,7 +11,7 @@ import s3Client from "../../config/s3client.js";
 const prisma = new PrismaClient();
 const ctrl = {};
 
-//  Funciones * TODO - Validar tipo de archivo cargado
+//  Funciones
 ctrl.getSolicitudes = async (req, res) => {
   try {
     const token = req.header("Authorization");

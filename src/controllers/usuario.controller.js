@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 const prisma = new PrismaClient();
 const ctrl = {};
 
-//  Funciones - TODO
+//  Funciones
 ctrl.getUsuarios = async (req, res) => {
   try {
     const token = req.header("Authorization");

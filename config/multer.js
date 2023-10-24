@@ -57,11 +57,20 @@ const verifyMultipleSizeAndTypes = async (req, res, next) => {
   });
   for (let i = 1; i <= 10; i++) {
     if (files["requisito_" + i] != undefined) {
+      //  Validar que no hayan archivos demás
+      if (i > formats.length) {
+        res.json({
+          message: "Fail",
+          data: "Límite de archivos cargados superado",
+        });
+        return;
+      }
       let extFile = files["requisito_" + i][0].originalname
         .split(".")
         .pop()
         .toLowerCase();
-      if (files["requisito_" + i][0].size > 10240) {
+      if (files["requisito_" + i][0].size > 10485760) {
+        console.log(files["requisito_" + i][0]);
         res.json({ message: "Fail", data: "Archivo supera los 10 mb" });
         return;
       } else if (extFile != formats[i - 1].formato) {

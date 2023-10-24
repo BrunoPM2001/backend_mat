@@ -3,6 +3,9 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 const storage = multer.memoryStorage();
+
+//  Middlewares
+//  Carga de plantillas en ciertos formatos
 const uploadPlantillas = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
@@ -20,6 +23,7 @@ const uploadPlantillas = multer({
   },
 });
 
+//  Carga de varios requisitos
 const uploadRequisitos = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
@@ -27,6 +31,7 @@ const uploadRequisitos = multer({
   },
 });
 
+//  Validar tamaño de un archivo
 const verifySize = (req, res, next) => {
   const maxSize = 1024 * 1024 * 10;
   if (req.file) {
@@ -42,7 +47,9 @@ const verifySize = (req, res, next) => {
   }
 };
 
+//  Validar carga y tipo de requisitos cargados
 const verifyMultipleSizeAndTypes = async (req, res, next) => {
+  const maxSize = 1024 * 1024 * 10;
   const files = req.files;
   const { id_tramite } = req.body;
   const formats = await prisma.requisitos.findMany({
@@ -69,7 +76,7 @@ const verifyMultipleSizeAndTypes = async (req, res, next) => {
         .split(".")
         .pop()
         .toLowerCase();
-      if (files["requisito_" + i][0].size > 10485760) {
+      if (files["requisito_" + i][0].size > maxSize) {
         console.log(files["requisito_" + i][0]);
         res.json({ message: "Fail", data: "Archivo supera los 10 mb" });
         return;

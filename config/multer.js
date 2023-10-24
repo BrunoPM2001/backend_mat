@@ -1,5 +1,7 @@
 import multer from "multer";
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
 const storage = multer.memoryStorage();
 const uploadPlantillas = multer({
   storage: storage,
@@ -21,15 +23,7 @@ const uploadPlantillas = multer({
 const uploadRequisitos = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
-    // if ([
-    //   "application/pdf",
-    //   "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    // ].includes(file.mimetype)
-    // ) {
     cb(null, true);
-    // } else {
-    //   cb(null, false);
-    // }
   },
 });
 
@@ -48,12 +42,30 @@ const verifySize = (req, res, next) => {
   }
 };
 
-const verifyMultipleSize = (req, res, next) => {
+const verifyMultipleSizeAndTypes = async (req, res, next) => {
   const files = req.files;
+  const { id_tramite } = req.body;
+  const formats = await prisma.requisitos.findMany({
+    where: {
+      id_tramite: Number(id_tramite),
+      activo: true,
+    },
+    select: {
+      id: true,
+      formato: true,
+    },
+  });
   for (let i = 1; i <= 10; i++) {
     if (files["requisito_" + i] != undefined) {
+      let extFile = files["requisito_" + i][0].originalname
+        .split(".")
+        .pop()
+        .toLowerCase();
       if (files["requisito_" + i][0].size > 10240) {
         res.json({ message: "Fail", data: "Archivo supera los 10 mb" });
+        return;
+      } else if (extFile != formats[i - 1].formato) {
+        res.json({ message: "Fail", data: "Archivo de tipo incorrecto" });
         return;
       }
     }
@@ -61,4 +73,9 @@ const verifyMultipleSize = (req, res, next) => {
   next();
 };
 
-export { uploadPlantillas, uploadRequisitos, verifySize, verifyMultipleSize };
+export {
+  uploadPlantillas,
+  uploadRequisitos,
+  verifySize,
+  verifyMultipleSizeAndTypes,
+};

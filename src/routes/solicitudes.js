@@ -1,6 +1,9 @@
 import { Router } from "express";
 import ctrl from "../controllers/solicitudes.controller.js";
-import { uploadRequisitos, verifyMultipleSize } from "../../config/multer.js";
+import {
+  uploadRequisitos,
+  verifyMultipleSizeAndTypes,
+} from "../../config/multer.js";
 
 const router = Router();
 
@@ -23,7 +26,7 @@ router.post(
     { name: "requisito_9", maxCount: 1 },
     { name: "requisito_10", maxCount: 1 },
   ]),
-  verifyMultipleSize,
+  verifyMultipleSizeAndTypes,
   ctrl.createSolicitud
 );
 
